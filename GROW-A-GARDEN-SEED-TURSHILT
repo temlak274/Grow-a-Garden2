@@ -1,0 +1,37 @@
+local Rep = game:GetService("ReplicatedStorage")
+local remotes = Rep:GetDescendants()
+
+local seeds = {
+    "candy_blossom",
+    "moon_blossom",
+    "sun_flower"
+}
+
+local function unlockSeed(seedName)
+    for _, v in ipairs(remotes) do
+        if (v:IsA("RemoteEvent") or v:IsA("RemoteFunction")) and v.Name:lower():find("unlock") then
+            pcall(function()
+                v:FireServer(seedName)
+                print("[✅] Unlock request sent for:", seedName)
+            end)
+        end
+    end
+end
+
+local function addToInventory(seedName)
+    for _, v in ipairs(remotes) do
+        local nameLower = v.Name:lower()
+        if (v:IsA("RemoteEvent") or v:IsA("RemoteFunction")) and
+           (nameLower:find("add") or nameLower:find("give") or nameLower:find("inventory") or nameLower:find("seed")) then
+            pcall(function()
+                v:FireServer(seedName)
+                print("[✅] Added to inventory:", seedName)
+            end)
+        end
+    end
+end
+
+for _, seed in ipairs(seeds) do
+    unlockSeed(seed)
+    addToInventory(seed)
+end
